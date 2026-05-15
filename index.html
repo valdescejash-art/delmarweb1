@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🌊 D'el Mar a su mesa - Pedidos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a2f44;
+            padding: 12px;
+        }
+
+        .app {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 28px;
+            padding: 16px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid gold;
+            margin-bottom: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        h1 {
+            font-size: 1.6rem;
+            color: #ffecb3;
+            text-shadow: 1px 1px 2px #000;
+        }
+        .sub {
+            color: #cfe7ff;
+            font-size: 0.8rem;
+        }
+
+        .seccion {
+            margin-bottom: 24px;
+        }
+        .seccion h2 {
+            background: #1e4a76;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .productos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .producto-card {
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: 0.1s;
+        }
+        .producto-card:active { transform: scale(0.97); }
+        .producto-img {
+            width: 100%;
+            height: 110px;
+            background: #f0f0f0;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .producto-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .producto-nombre {
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin: 6px 0;
+            color: #023e6b;
+            line-height: 1.2;
+        }
+        .producto-precio {
+            color: #1f7b2e;
+            font-weight: bold;
+            font-size: 1rem;
+            margin: 4px 0;
+        }
+        .btn-agregar {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 30px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .carrito {
+            background: white;
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .carrito h2 {
+            font-size: 1.3rem;
+            border-bottom: 2px solid #ffc857;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+            color: #023e6b;
+        }
+        .item-carrito {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .item-info { flex: 2; }
+        .item-nombre { font-weight: 600; font-size: 0.85rem; }
+        .item-precio { font-size: 0.7rem; color: gray; }
+        .item-cantidad { display: flex; align-items: center; gap: 5px; }
+        .item-cantidad button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e9ecef;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .item-subtotal { font-weight: bold; min-width: 60px; text-align: right; }
+        .eliminar { background: none; border: none; color: red; font-size: 1.2rem; }
+        .total-detalle {
+            margin-top: 12px;
+            border-top: 2px solid #ffc857;
+            padding-top: 10px;
+        }
+        .envio-select { margin: 14px 0; }
+        .form-cliente { margin: 10px 0; }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            font-weight: bold;
+            padding: 14px;
+            border: none;
+            border-radius: 40px;
+            width: 100%;
+            font-size: 1rem;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #ddd;
+        }
+        .footer-admin-hint {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.2);
+            margin-top: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        @media (max-width: 450px) {
+            .productos-grid { gap: 8px; }
+            .producto-nombre { font-size: 0.75rem; }
+            .btn-agregar { padding: 6px; font-size: 0.75rem; }
+        }
+
+        /* ===== ESTILOS DEL PANEL ADMIN ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-box h2 {
+            color: #023e6b;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+        .modal-box input, .modal-box select, .modal-box textarea {
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+        .btn-admin {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-primary { background: #023e6b; color: white; }
+        .btn-success { background: #25D366; color: white; }
+        .btn-danger  { background: #e74c3c; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-gray    { background: #aaa; color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #ffc857;
+            padding-bottom: 10px;
+        }
+        .admin-header h2 { margin: 0; }
+
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #023e6b;
+            background: white;
+            color: #023e6b;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+        .tab-btn.active {
+            background: #023e6b;
+            color: white;
+        }
+
+        .admin-product-list { display: flex; flex-direction: column; gap: 8px; }
+        .admin-product-item {
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-product-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #ddd;
+            flex-shrink: 0;
+        }
+        .admin-product-info { flex: 1; min-width: 0; }
+        .admin-product-name { font-weight: bold; font-size: 0.82rem; color: #023e6b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-product-price { font-size: 0.75rem; color: #1f7b2e; font-weight: bold; }
+        .admin-product-sec { font-size: 0.7rem; color: #777; }
+        .admin-product-actions { display: flex; gap: 5px; flex-shrink: 0; }
+
+        .form-group { margin-bottom: 10px; }
+        .form-group label { font-size: 0.82rem; font-weight: 600; color: #023e6b; display: block; margin-bottom: 2px; margin-left: 4px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .admin-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 16px;
+            background: #023e6b;
+            color: white;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 999;
+            border: none;
+        }
+
+        .producto-oculto { opacity: 0.4; position: relative; }
+        .oculto-tag {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .msg-ok {
+            background: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            display: none;
+        }
+        .msg-ok.show { display: block; }
+
+        .seccion-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 4px;
+        }
+        .badge-mariscos { background: #cce5ff; color: #004085; }
+        .badge-pescados { background: #d4edda; color: #155724; }
+        .badge-carnicos { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="header">
+        <!-- Haz clic 5 veces seguidas en el logo para abrir el panel admin -->
+        <img src="imagenes/LOGO.jpeg" alt="Logo" class="logo" id="logoBtn"
+             onerror="this.src='https://placehold.co/70x70?text=🌊'">
+        <h1>🌊 D'el Mar a su mesa</h1>
+        <div class="sub">Fresco del mar a tu mesa – Envíos a toda La Habana</div>
+    </div>
+
+    <div id="contenedorSecciones"></div>
+
+    <div class="carrito">
+        <h2>📦 Carrito</h2>
+        <div id="carritoLista">🛍️ Vacío</div>
+        <div id="detalleTotales" class="total-detalle"></div>
+        <div class="envio-select">
+            <label>🏙️ Municipio de entrega:</label>
+            <select id="municipioSelect">
+                <option value="">-- Selecciona --</option>
+                <option value="2">Habana Vieja (2 km)</option>
+                <option value="3">Centro Habana (3 km)</option>
+                <option value="4">Cerro (4 km)</option>
+                <option value="5">Diez de Octubre (5 km)</option>
+                <option value="10">Arroyo Naranjo (10 km)</option>
+                <option value="12">Boyeros (12 km)</option>
+                <option value="11">La Lisa (11 km)</option>
+                <option value="8">Marianao (8 km)</option>
+                <option value="7">Playa (7 km)</option>
+                <option value="6">Habana del Este (6 km)</option>
+                <option value="4">Plaza de la Revolución (4 km)</option>
+                <option value="9">Guanabacoa (9 km)</option>
+                <option value="6">Regla (6 km)</option>
+                <option value="8">San Miguel del Padrón (8 km)</option>
+                <option value="14">Cotorro (14 km)</option>
+            </select>
+        </div>
+        <div class="form-cliente">
+            <input type="text" id="clienteNombre" placeholder="Tu nombre *">
+            <input type="tel" id="clienteTelefono" placeholder="Teléfono">
+            <textarea id="clienteDireccion" rows="2" placeholder="Dirección específica *"></textarea>
+        </div>
+        <button class="btn-whatsapp" id="enviarWhatsappBtn">💬 Enviar pedido por WhatsApp</button>
+        <div class="aviso" style="font-size: 11px; margin-top: 10px;">⚠️ Costo de envío: $150 por km desde el Capitolio</div>
+    </div>
+    <footer>🐟 Pedidos por WhatsApp | Frescura garantizada</footer>
+</div>
+
+<!-- ===== MODAL CONTRASEÑA ===== -->
+<div class="modal-overlay" id="modalPassword" style="display:none;">
+    <div class="modal-box" style="max-width:320px; text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:10px;">🔐</div>
+        <h2 style="margin-bottom:12px;">Acceso Administrador</h2>
+        <input type="password" id="inputPassword" placeholder="Contraseña" style="text-align:center; letter-spacing:4px;" onkeydown="if(event.key==='Enter') verificarPassword()">
+        <div id="errorPassword" style="color:red; font-size:0.8rem; margin-top:6px; display:none;">❌ Contraseña incorrecta</div>
+        <div style="display:flex; gap:10px; margin-top:14px; justify-content:center;">
+            <button class="btn-admin btn-primary" onclick="verificarPassword()">Entrar</button>
+            <button class="btn-admin btn-gray" onclick="cerrarModalPassword()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PANEL ADMIN PRINCIPAL ===== -->
+<div class="modal-overlay" id="modalAdmin" style="display:none;">
+    <div class="modal-box">
+        <div class="admin-header">
+            <h2>⚙️ Panel Admin</h2>
+            <button class="btn-admin btn-gray btn-sm" onclick="cerrarAdmin()">✕ Cerrar</button>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="tab-btn active" id="tabVerBtn" onclick="mostrarTab('ver')">📋 Productos</button>
+            <button class="tab-btn" id="tabAgregarBtn" onclick="mostrarTab('agregar')">➕ Nuevo</button>
+        </div>
+
+        <div id="msgOk" class="msg-ok">✅ Cambios guardados correctamente</div>
+
+        <!-- TAB: Ver/Editar productos -->
+        <div id="tabVer">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:0.82rem; color:#777;">Haz clic en ✏️ para editar</span>
+                <button class="btn-admin btn-warning btn-sm" onclick="confirmarReset()">🔄 Restablecer</button>
+            </div>
+            <div class="admin-product-list" id="adminListaProductos"></div>
+        </div>
+
+        <!-- TAB: Agregar producto -->
+        <div id="tabAgregar" style="display:none;">
+            <div id="formTitulo" style="font-weight:bold; color:#023e6b; margin-bottom:12px; font-size:1rem;">➕ Nuevo producto</div>
+            <div class="form-group">
+                <label>Nombre del producto</label>
+                <input type="text" id="formNombre" placeholder="ej: 🐟 Filete de pargo (1.5 lb)">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="formPrecio" placeholder="ej: 2700" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Sección</label>
+                    <select id="formSeccion" style="border-radius:12px;">
+                        <option value="mariscos">🌊 Mariscos</option>
+                        <option value="pescados">🐟 Pescados</option>
+                        <option value="carnicos">🥩 Cárnicos</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>URL o ruta de la imagen</label>
+                <input type="text" id="formImg" placeholder="imagenes/mifoto.jpg  o  https://...">
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-left:4px;">
+                <input type="checkbox" id="formVisible" checked style="width:auto; margin:0; padding:0; border-radius:4px;">
+                <label for="formVisible" style="margin:0; cursor:pointer;">Visible para clientes</label>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn-admin btn-success" style="flex:1;" onclick="guardarProductoForm()">💾 Guardar</button>
+                <button class="btn-admin btn-gray" onclick="cancelarEdicion()">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- TAB: Editar producto existente (oculto, se activa al pulsar ✏️) -->
+        <div id="tabEditar" style="display:none;">
+            <div style="font-weight:bold; color:#023e6b; margin-bottom:12px; font-size:1rem;">✏️ Editar producto</div>
+            <input type="hidden" id="editId">
+            <div class="form-group">
+                <label>Nombre del producto</label>
+                <input type="text" id="editNombre">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="editPrecio" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Sección</label>
+                    <select id="editSeccion" style="border-radius:12px;">
+                        <option value="mariscos">🌊 Mariscos</option>
+                        <option value="pescados">🐟 Pescados</option>
+                        <option value="carnicos">🥩 Cárnicos</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>URL o ruta de la imagen</label>
+                <input type="text" id="editImg">
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-left:4px;">
+                <input type="checkbox" id="editVisible" style="width:auto; margin:0; padding:0;">
+                <label for="editVisible" style="margin:0; cursor:pointer;">Visible para clientes</label>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn-admin btn-primary" style="flex:1;" onclick="aplicarEdicion()">✅ Guardar cambios</button>
+                <button class="btn-admin btn-gray" onclick="mostrarTab('ver')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    //  CONFIGURACIÓN - SOLO MODIFICA ESTAS DOS LÍNEAS
+    // ============================================================
+    const telefonoNegocio = "5363152488";   // Tu número de WhatsApp
+    const ADMIN_PASSWORD  = "DelMar2025";   // ← Cambia esta contraseña
+    // ============================================================
+
+    const productosDefault = [
+        { id: 1,  nombre: "🍤 Camarón limpio (2 lb)",              precio: 5600, img: "imagenes/camaron.jpg",        seccion: "mariscos", visible: true },
+        { id: 2,  nombre: "🦞 Langosta en colas (5 colas)",        precio: 3000, img: "imagenes/colas5.jpg",         seccion: "mariscos", visible: true },
+        { id: 3,  nombre: "🦞 Langosta en colas (7-8 colas)",      precio: 3500, img: "imagenes/langostacolas2.jpg", seccion: "mariscos", visible: true },
+        { id: 4,  nombre: "🦞 Langosta limpia (paquete)",          precio: 3500, img: "imagenes/langostalimpia.jpg", seccion: "mariscos", visible: true },
+        { id: 5,  nombre: "🦀 Masa de cangrejo (2 lb)",            precio: 3100, img: "imagenes/masacangrejo.jpg",   seccion: "mariscos", visible: true },
+        { id: 6,  nombre: "🦀 Muelas de cangrejo moro (2 lb)",     precio: 2000, img: "imagenes/muelamoro.jpg",      seccion: "mariscos", visible: true },
+        { id: 7,  nombre: "🐟 Filete de Emperador (1.5 lb)",       precio: 2600, img: "imagenes/fileteemperador.jpg",seccion: "pescados", visible: true },
+        { id: 8,  nombre: "🐟 Filete de salmón (1 lb)",            precio: 1900, img: "imagenes/SALMON.jpg",         seccion: "pescados", visible: true },
+        { id: 9,  nombre: "🐟 Filetes de Castero (1.5 lb)",        precio: 2600, img: "imagenes/filetecastero.jpg",  seccion: "pescados", visible: true },
+        { id: 10, nombre: "🐟 Ruedas de pargo (2 lb)",             precio: 3500, img: "imagenes/ruedapargo.jpg",     seccion: "pescados", visible: true },
+        { id: 11, nombre: "🐟 Filete de pargo (1.5 lb)",           precio: 2700, img: "imagenes/filetepargo.jpg",    seccion: "pescados", visible: true },
+        { id: 12, nombre: "🐟 Ruedas de lisa (1.5 lb)",            precio: 2400, img: "imagenes/ruedalisa.jpg",      seccion: "pescados", visible: true },
+        { id: 13, nombre: "🐟 Pargo para asar (8 lb desvicerado)", precio: 9500, img: "imagenes/PARGOASAR.jpg",      seccion: "pescados", visible: true },
+        { id: 14, nombre: "🐢 Carne limpia de Cawama (1.5 lb)",    precio: 3100, img: "imagenes/carnecawama.jpg",    seccion: "carnicos", visible: true },
+        { id: 15, nombre: "🐄 Res (1.5 lb)",                       precio: 3000, img: "imagenes/res1.5.jpg",         seccion: "carnicos", visible: true },
+        { id: 16, nombre: "🐄 Res (3 lb)",                         precio: 6000, img: "imagenes/res3.jpg",           seccion: "carnicos", visible: true },
+        { id: 17, nombre: "🐄 Res (5 lb)",                         precio: 9000, img: "imagenes/res5.jpg",           seccion: "carnicos", visible: true }
+    ];
+
+    // ---- Estado de la app ----
+    let productos = [];
+    let carrito   = [];
+    let kmSeleccionado = 0;
+    let nextId = 100;
+
+    // ---- Persistencia productos admin ----
+    function cargarProductos() {
+        const guardados = localStorage.getItem("delmarProductos");
+        if (guardados) {
+            productos = JSON.parse(guardados);
+            nextId = Math.max(...productos.map(p => p.id), 99) + 1;
+        } else {
+            productos = productosDefault.map(p => ({...p}));
+            nextId = 100;
+        }
+    }
+    function guardarProductos() {
+        localStorage.setItem("delmarProductos", JSON.stringify(productos));
+    }
+
+    // ---- Persistencia carrito ----
+    function guardarCarrito() { localStorage.setItem("carritoDelMar", JSON.stringify(carrito)); }
+    function cargarCarrito()  { const g = localStorage.getItem("carritoDelMar"); if(g) carrito = JSON.parse(g); actualizarTodo(); }
+
+    // ---- Carrito ----
+    function agregarAlCarrito(id) {
+        const prod = productos.find(p => p.id === id);
+        if(!prod) return;
+        const existente = carrito.find(i => i.id === id);
+        if(existente) existente.cantidad++;
+        else carrito.push({ id: prod.id, nombre: prod.nombre, precio: prod.precio, cantidad: 1 });
+        guardarCarrito();
+        actualizarTodo();
+    }
+
+    function cambiarCantidad(id, delta) {
+        const idx = carrito.findIndex(i => i.id === id);
+        if(idx === -1) return;
+        const nueva = carrito[idx].cantidad + delta;
+        if(nueva <= 0) carrito.splice(idx,1);
+        else carrito[idx].cantidad = nueva;
+        guardarCarrito();
+        actualizarTodo();
+    }
+
+    function eliminarItem(id) {
+        carrito = carrito.filter(i => i.id !== id);
+        guardarCarrito();
+        actualizarTodo();
+    }
+
+    function calcularTotales() {
+        let subtotal = 0;
+        carrito.forEach(i => subtotal += i.precio * i.cantidad);
+        let envio = kmSeleccionado ? kmSeleccionado * 150 : 0;
+        return { subtotal, envio, total: subtotal + envio };
+    }
+
+    function renderizarCarrito() {
+        const contenedor = document.getElementById("carritoLista");
+        if(!contenedor) return;
+        if(carrito.length === 0) {
+            contenedor.innerHTML = '<div style="padding:10px; text-align:center;">🛍️ No hay productos</div>';
+            return;
+        }
+        let html = "";
+        carrito.forEach(item => {
+            html += `
+                <div class="item-carrito">
+                    <div class="item-info">
+                        <div class="item-nombre">${item.nombre}</div>
+                        <div class="item-precio">$${item.precio} c/u</div>
+                    </div>
+                    <div class="item-cantidad">
+                        <button class="btnMenor" data-id="${item.id}">-</button>
+                        <span>${item.cantidad}</span>
+                        <button class="btnMayor" data-id="${item.id}">+</button>
+                        <button class="eliminar" data-id="${item.id}">🗑️</button>
+                    </div>
+                    <div class="item-subtotal">$${item.precio * item.cantidad}</div>
+                </div>`;
+        });
+        contenedor.innerHTML = html;
+        document.querySelectorAll('.btnMenor').forEach(btn => btn.addEventListener('click', () => cambiarCantidad(parseInt(btn.dataset.id), -1)));
+        document.querySelectorAll('.btnMayor').forEach(btn => btn.addEventListener('click', () => cambiarCantidad(parseInt(btn.dataset.id), 1)));
+        document.querySelectorAll('.eliminar').forEach(btn => btn.addEventListener('click', () => eliminarItem(parseInt(btn.dataset.id))));
+    }
+
+    function renderizarTotales() {
+        const { subtotal, envio, total } = calcularTotales();
+        const div = document.getElementById("detalleTotales");
+        div.innerHTML = `
+            <div style="display:flex;justify-content:space-between;"><span>Subtotal:</span><span>$${subtotal}</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>🚚 Envío (${kmSeleccionado} km):</span><span>$${envio}</span></div>
+            <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:1.1rem;"><span>Total:</span><span>$${total}</span></div>`;
+    }
+
+    const IMG_FALLBACK = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22140%22%20viewBox%3D%220%200%20200%20140%22%3E%3Crect%20width%3D%22200%22%20height%3D%22140%22%20fill%3D%22%23f0f0f0%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-size%3D%2212%22%20fill%3D%22%23999%22%20text-anchor%3D%22middle%22%3ESin%20imagen%3C%2Ftext%3E%3C%2Fsvg%3E";
+
+    function renderizarSecciones() {
+        const secciones = [
+            { titulo: "🌊 Mariscos", key: "mariscos" },
+            { titulo: "🐟 Pescados", key: "pescados" },
+            { titulo: "🥩 Cárnicos", key: "carnicos" }
+        ];
+        const container = document.getElementById("contenedorSecciones");
+        container.innerHTML = "";
+        secciones.forEach(sec => {
+            const prodFiltrados = productos.filter(p => p.seccion === sec.key && p.visible !== false);
+            if(prodFiltrados.length === 0) return;
+            const divSeccion = document.createElement("div");
+            divSeccion.className = "seccion";
+            divSeccion.innerHTML = `<h2>${sec.titulo}</h2><div class="productos-grid" id="grid-${sec.key}"></div>`;
+            container.appendChild(divSeccion);
+            const grid = document.getElementById(`grid-${sec.key}`);
+            prodFiltrados.forEach(prod => {
+                const card = document.createElement("div");
+                card.className = "producto-card";
+                card.innerHTML = `
+                    <div class="producto-img">
+                        <img src="${prod.img}" alt="${prod.nombre}" loading="lazy" onerror="this.src='${IMG_FALLBACK}'">
+                    </div>
+                    <div class="producto-nombre">${prod.nombre}</div>
+                    <div class="producto-precio">$${prod.precio}</div>
+                    <button class="btn-agregar" data-id="${prod.id}">➕ Agregar</button>`;
+                card.querySelector(".btn-agregar").addEventListener("click", () => agregarAlCarrito(prod.id));
+                grid.appendChild(card);
+            });
+        });
+    }
+
+    function actualizarTodo() {
+        renderizarCarrito();
+        renderizarTotales();
+    }
+
+    function initMunicipio() {
+        document.getElementById("municipioSelect").addEventListener("change", (e) => {
+            const value = parseInt(e.target.value);
+            kmSeleccionado = isNaN(value) ? 0 : value;
+            renderizarTotales();
+        });
+    }
+
+    function enviarPedido() {
+        const nombre    = document.getElementById("clienteNombre")?.value.trim();
+        const direccion = document.getElementById("clienteDireccion")?.value.trim();
+        const telefonoCliente = document.getElementById("clienteTelefono")?.value.trim();
+        if(!nombre)    { alert("⚠️ Escribe tu nombre.");    return; }
+        if(!direccion) { alert("⚠️ Escribe la dirección."); return; }
+        if(carrito.length === 0) { alert("🛒 Agrega productos."); return; }
+        const { subtotal, envio, total } = calcularTotales();
+        let detalle = "";
+        carrito.forEach(item => detalle += `• ${item.nombre}  x${item.cantidad}  = $${item.precio * item.cantidad}\n`);
+        let mensaje = `🌊 *NUEVO PEDIDO* 🌊\n\n👤 ${nombre}\n${telefonoCliente ? `📞 ${telefonoCliente}\n` : ''}🏠 ${direccion}\n\n📋 Productos:\n${detalle}\n💰 Subtotal: $${subtotal}\n🚚 Envío (${kmSeleccionado} km): $${envio}\n✨ TOTAL: $${total}`;
+        window.open(`https://wa.me/${telefonoNegocio}?text=${encodeURIComponent(mensaje)}`, "_blank");
+    }
+
+    // ============================================================
+    //  PANEL ADMIN
+    // ============================================================
+
+    // --- Acceso secreto: 5 clics en el logo ---
+    let logoClicks = 0, logoTimer = null;
+    document.getElementById("logoBtn").addEventListener("click", () => {
+        logoClicks++;
+        clearTimeout(logoTimer);
+        if(logoClicks >= 5) {
+            logoClicks = 0;
+            abrirModalPassword();
+        } else {
+            logoTimer = setTimeout(() => logoClicks = 0, 2000);
+        }
+    });
+
+    function abrirModalPassword() {
+        document.getElementById("inputPassword").value = "";
+        document.getElementById("errorPassword").style.display = "none";
+        document.getElementById("modalPassword").style.display = "flex";
+        setTimeout(() => document.getElementById("inputPassword").focus(), 100);
+    }
+
+    function cerrarModalPassword() {
+        document.getElementById("modalPassword").style.display = "none";
+    }
+
+    function verificarPassword() {
+        const val = document.getElementById("inputPassword").value;
+        if(val === ADMIN_PASSWORD) {
+            cerrarModalPassword();
+            abrirAdmin();
+        } else {
+            document.getElementById("errorPassword").style.display = "block";
+            document.getElementById("inputPassword").value = "";
+            document.getElementById("inputPassword").focus();
+        }
+    }
+
+    function abrirAdmin() {
+        mostrarTab("ver");
+        renderizarListaAdmin();
+        document.getElementById("modalAdmin").style.display = "flex";
+    }
+
+    function cerrarAdmin() {
+        document.getElementById("modalAdmin").style.display = "none";
+        renderizarSecciones(); // refresca la tienda con los últimos cambios
+    }
+
+    // --- Tabs ---
+    function mostrarTab(tab) {
+        document.getElementById("tabVer").style.display     = (tab === "ver")     ? "block" : "none";
+        document.getElementById("tabAgregar").style.display = (tab === "agregar") ? "block" : "none";
+        document.getElementById("tabEditar").style.display  = (tab === "editar")  ? "block" : "none";
+        document.getElementById("tabVerBtn").classList.toggle("active",     tab === "ver");
+        document.getElementById("tabAgregarBtn").classList.toggle("active", tab === "agregar");
+        ocultarMsgOk();
+        if(tab === "agregar") limpiarFormAgregar();
+    }
+
+    // --- Lista de productos en admin ---
+    const secLabels = { mariscos: "badge-mariscos", pescados: "badge-pescados", carnicos: "badge-carnicos" };
+    const secNombres = { mariscos: "Mariscos", pescados: "Pescados", carnicos: "Cárnicos" };
+
+    function renderizarListaAdmin() {
+        const lista = document.getElementById("adminListaProductos");
+        lista.innerHTML = "";
+        productos.forEach(prod => {
+            const item = document.createElement("div");
+            item.className = "admin-product-item";
+            item.style.opacity = prod.visible === false ? "0.5" : "1";
+            item.innerHTML = `
+                <img class="admin-product-img" src="${prod.img}" alt="" onerror="this.src='${IMG_FALLBACK}'">
+                <div class="admin-product-info">
+                    <div class="admin-product-name">${prod.nombre}</div>
+                    <div class="admin-product-price">$${prod.precio}</div>
+                    <div>
+                        <span class="seccion-badge ${secLabels[prod.seccion] || ''}">${secNombres[prod.seccion] || prod.seccion}</span>
+                        ${prod.visible === false ? '<span style="font-size:0.7rem; color:#e74c3c; margin-left:4px;">⛔ Oculto</span>' : '<span style="font-size:0.7rem; color:#1f7b2e; margin-left:4px;">✅ Visible</span>'}
+                    </div>
+                </div>
+                <div class="admin-product-actions">
+                    <button class="btn-admin btn-warning btn-sm" onclick="abrirEditar(${prod.id})">✏️</button>
+                    <button class="btn-admin btn-danger btn-sm" onclick="eliminarProducto(${prod.id})">🗑️</button>
+                </div>`;
+            lista.appendChild(item);
+        });
+    }
+
+    // --- Agregar producto ---
+    function limpiarFormAgregar() {
+        document.getElementById("formNombre").value  = "";
+        document.getElementById("formPrecio").value  = "";
+        document.getElementById("formSeccion").value = "mariscos";
+        document.getElementById("formImg").value     = "";
+        document.getElementById("formVisible").checked = true;
+    }
+
+    function guardarProductoForm() {
+        const nombre  = document.getElementById("formNombre").value.trim();
+        const precio  = parseFloat(document.getElementById("formPrecio").value);
+        const seccion = document.getElementById("formSeccion").value;
+        const img     = document.getElementById("formImg").value.trim() || IMG_FALLBACK;
+        const visible = document.getElementById("formVisible").checked;
+
+        if(!nombre)        { alert("⚠️ Escribe el nombre del producto."); return; }
+        if(isNaN(precio) || precio < 0) { alert("⚠️ Escribe un precio válido."); return; }
+
+        productos.push({ id: nextId++, nombre, precio, img, seccion, visible });
+        guardarProductos();
+        mostrarTab("ver");
+        renderizarListaAdmin();
+        mostrarMsgOk();
+    }
+
+    // --- Editar producto ---
+    function abrirEditar(id) {
+        const prod = productos.find(p => p.id === id);
+        if(!prod) return;
+        document.getElementById("editId").value        = id;
+        document.getElementById("editNombre").value    = prod.nombre;
+        document.getElementById("editPrecio").value    = prod.precio;
+        document.getElementById("editSeccion").value   = prod.seccion;
+        document.getElementById("editImg").value       = prod.img || "";
+        document.getElementById("editVisible").checked = prod.visible !== false;
+        // Ocultar tabs superiores visualmente y mostrar tabEditar
+        document.getElementById("tabVer").style.display     = "none";
+        document.getElementById("tabAgregar").style.display = "none";
+        document.getElementById("tabEditar").style.display  = "block";
+        document.getElementById("tabVerBtn").classList.remove("active");
+        document.getElementById("tabAgregarBtn").classList.remove("active");
+        ocultarMsgOk();
+    }
+
+    function aplicarEdicion() {
+        const id      = parseInt(document.getElementById("editId").value);
+        const nombre  = document.getElementById("editNombre").value.trim();
+        const precio  = parseFloat(document.getElementById("editPrecio").value);
+        const seccion = document.getElementById("editSeccion").value;
+        const img     = document.getElementById("editImg").value.trim() || IMG_FALLBACK;
+        const visible = document.getElementById("editVisible").checked;
+
+        if(!nombre)        { alert("⚠️ El nombre no puede estar vacío."); return; }
+        if(isNaN(precio) || precio < 0) { alert("⚠️ Precio inválido."); return; }
+
+        const idx = productos.findIndex(p => p.id === id);
+        if(idx === -1) return;
+        productos[idx] = { id, nombre, precio, img, seccion, visible };
+        guardarProductos();
+        mostrarTab("ver");
+        renderizarListaAdmin();
+        mostrarMsgOk();
+    }
+
+    // --- Eliminar producto ---
+    function eliminarProducto(id) {
+        const prod = productos.find(p => p.id === id);
+        if(!prod) return;
+        if(!confirm(`¿Eliminar "${prod.nombre}"? Esta acción no se puede deshacer.`)) return;
+        productos = productos.filter(p => p.id !== id);
+        guardarProductos();
+        renderizarListaAdmin();
+        mostrarMsgOk();
+    }
+
+    // --- Restablecer productos predeterminados ---
+    function confirmarReset() {
+        if(!confirm("⚠️ ¿Restablecer la lista a los productos originales? Se perderán todos los cambios.")) return;
+        localStorage.removeItem("delmarProductos");
+        cargarProductos();
+        renderizarListaAdmin();
+        mostrarMsgOk();
+    }
+
+    // --- Mensajes ---
+    function mostrarMsgOk() {
+        const m = document.getElementById("msgOk");
+        m.classList.add("show");
+        setTimeout(() => m.classList.remove("show"), 2500);
+    }
+    function ocultarMsgOk() {
+        document.getElementById("msgOk").classList.remove("show");
+    }
+
+    function cancelarEdicion() { mostrarTab("ver"); }
+
+    // ---- Inicialización ----
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarProductos();
+        renderizarSecciones();
+        cargarCarrito();
+        initMunicipio();
+        document.getElementById("enviarWhatsappBtn").addEventListener("click", enviarPedido);
+    });
+</script>
+</body>
+</html>
